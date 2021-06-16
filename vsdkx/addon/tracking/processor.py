@@ -62,7 +62,8 @@ class TrackerProcessor(Addon):
             if self._trackable_obj is None:
                 self._trackable_obj = TrackableObject(object_id,
                                                       centroid,
-                                                      bounding_boxes[object_id])
+                                                      bounding_boxes[
+                                                          object_id])
                 self._trackable_obj.trajectory_mean = centroid
                 self._get_object_position(centroid, 0)
             # otherwise, there is a trackable object so we can utilize it
@@ -145,6 +146,3 @@ class TrackerProcessor(Addon):
             self._trackable_obj.prev_position = self._trackable_obj.position
 
         return event_counter_in, event_counter_out
-
-    def pre_process(self, frame: ndarray) -> ndarray:
-        pass
