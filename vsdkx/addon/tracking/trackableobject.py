@@ -1,6 +1,3 @@
-import json
-
-
 class TrackableObject:
     """
     A class for trackable object containing relevant information
@@ -34,4 +31,4 @@ class TrackableObject:
         self.trajectory_mean = ''
 
     def __repr__(self) -> str:
-        return json.dumps(self)
+        return f"{{\"object_id\": {self.object_id}}}"
