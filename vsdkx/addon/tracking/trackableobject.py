@@ -31,4 +31,4 @@ class TrackableObject:
         self.trajectory_mean = ''
 
     def __repr__(self) -> str:
-        return f"{{\"object_id\": {self.object_id}}}"
+        return f"{{'object_id': {self.object_id}}}"
