@@ -1,3 +1,6 @@
+import json
+
+
 class TrackableObject:
     """
     A class for trackable object containing relevant information
@@ -11,6 +14,7 @@ class TrackableObject:
         prev_position (string): Position of object from previous frame
         bounding_box (array): Bounding box array
     """
+
     def __init__(self, object_id, centroid, bounding_box):
         """
         Args:
@@ -28,3 +32,6 @@ class TrackableObject:
         self.position = ''
         self.prev_position = ''
         self.trajectory_mean = ''
+
+    def __repr__(self) -> str:
+        return json.dumps(self)
