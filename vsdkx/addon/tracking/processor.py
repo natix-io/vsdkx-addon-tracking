@@ -25,11 +25,12 @@ class TrackerProcessor(Addon):
         self._bidirectional_mode = addon_config['bidirectional_mode']
         self._bidirectional_threshold = addon_config['bidirectional_threshold']
 
-    def post_process(self, inference: Inference) -> Inference:
+    def post_process(self, frame: ndarray, inference: Inference) -> Inference:
         """
         Checks if input bounding boxes are new or existing objects to track
 
         Args:
+            frame (ndarray): the frame data
             inference (Inference): The result of the ai
 
         Returns:
