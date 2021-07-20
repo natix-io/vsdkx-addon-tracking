@@ -24,6 +24,7 @@ class TrackerProcessor(Addon):
             addon_config['distance_threshold'])
         self._bidirectional_mode = addon_config['bidirectional_mode']
         self._bidirectional_threshold = addon_config['bidirectional_threshold']
+        self._min_appearance = addon_config['min_appearance']
 
     def post_process(self, frame: ndarray, inference: Inference) -> Inference:
         """
@@ -71,7 +72,7 @@ class TrackerProcessor(Addon):
             # to determine the direction
 
             else:
-                x = [c[1] for c in self._trackable_obj.centroids]
+                x = [c[0] for c in self._trackable_obj.centroids]
                 y = [c[1] for c in self._trackable_obj.centroids]
                 direction_of_position = centroid[1] - np.mean(y)
 
@@ -84,14 +85,17 @@ class TrackerProcessor(Addon):
                     if not self._bidirectional_mode:
                         event_counter += 1
 
-                    elif self._bidirectional_mode:
+                if self._bidirectional_mode and not self._trackable_obj.position:
+                    if self._trackable_obj.tracked_number >= self._min_appearance:
                         events_in, events_out = \
                             self._get_object_position(centroid,
-                                                      direction_of_position)
+                                                     direction_of_position)
                         events_in_counter += events_in
                         events_out_counter += events_out
                         event_counter = {'in': events_in_counter,
                                          'out': events_out_counter}
+                    else:
+                        self._trackable_obj.tracked_number += 1
             # store the trackable object in our dictionary
             self._trackable_obj.bounding_box = bounding_boxes[object_id]
             self._trackableObjects[object_id] = self._trackable_obj
