@@ -2,7 +2,7 @@ from setuptools import setup, find_namespace_packages
 
 setup(
     name='vsdkx-addon-tracking',
-    url='https://gitlab.com/natix/cvison/vsdkx/vsdkx-addon-tracking',
+    url='https://github.com/natix-io/vsdkx-addon-tracking.git',
     author='Helmut',
     author_email='helmut@natix.io',
     namespace_packages=['vsdkx', 'vsdkx.addon'],
