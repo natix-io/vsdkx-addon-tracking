@@ -1,6 +1,6 @@
 import numpy as np
 from vsdkx.core.interfaces import Addon
-from vsdkx.core.structs import Inference
+from vsdkx.core.structs import AddonObject, Inference
 from numpy import ndarray
 
 from vsdkx.addon.tracking.centroidtracker import CentroidTracker
@@ -26,19 +26,21 @@ class TrackerProcessor(Addon):
         self._bidirectional_threshold = addon_config['bidirectional_threshold']
         self._min_appearance = addon_config['min_appearance']
 
-    def post_process(self, frame: ndarray, inference: Inference) -> Inference:
+    def post_process(self, addon_object: AddonObject) -> AddonObject:
         """
         Checks if input bounding boxes are new or existing objects to track
 
         Args:
-            frame (ndarray): the frame data
-            inference (Inference): The result of the ai
-
+            addon_object (AddonObject): addon object containing information
+            about inference,
+            frame, other addons shared data
         Returns:
-            event_counter (int | dict): Amount of newly tracked events, returns
-            an int on unidirectional mode and a dict on a bidirectional mode
-            last_updated (dict): Filtered list of trackable objects that were
-            updated on the last frame
+            (AddonObject): addon object has updated information for inference
+            result and/or shared information:
+                event_counter (int | dict): Amount of newly tracked events,
+                returns an int on unidirectional mode and a dict on a
+                bidirectional mode last_updated (dict): Filtered list of
+                trackable objects that were updated on the last frame
 
         """
         event_counter = 0
@@ -48,13 +50,14 @@ class TrackerProcessor(Addon):
         last_updated = {}
 
         # exit immediately if no people boxes found
-        if len(inference.boxes) == 0:
-            self._ct.update(inference.boxes)
-            inference.extra["tracked_objects"] = event_counter
-            inference.extra["trackable_object"] = last_updated
-            return inference
+        if len(addon_object.inference.boxes) == 0:
+            self._ct.update(addon_object.inference.boxes)
+            addon_object.inference.extra["tracked_objects"] = event_counter
+            addon_object.shared["trackable_object"] = last_updated
+            return addon_object
         else:
-            objects, bounding_boxes = self._ct.update(inference.boxes)
+            objects, bounding_boxes = \
+                self._ct.update(addon_object.inference.boxes)
 
         # loop over the tracked objects
         for (object_id, centroid) in objects.items():
@@ -85,11 +88,12 @@ class TrackerProcessor(Addon):
                     if not self._bidirectional_mode:
                         event_counter += 1
 
-                if self._bidirectional_mode and not self._trackable_obj.position:
+                if self._bidirectional_mode and \
+                        not self._trackable_obj.position:
                     if self._trackable_obj.tracked_number >= self._min_appearance:
                         events_in, events_out = \
                             self._get_object_position(centroid,
-                                                     direction_of_position)
+                                                      direction_of_position)
                         events_in_counter += events_in
                         events_out_counter += events_out
                         event_counter = {'in': events_in_counter,
@@ -100,9 +104,9 @@ class TrackerProcessor(Addon):
             self._trackable_obj.bounding_box = bounding_boxes[object_id]
             self._trackableObjects[object_id] = self._trackable_obj
             last_updated[object_id] = self._trackable_obj
-        inference.extra["tracked_objects"] = event_counter
-        inference.extra["trackable_object"] = last_updated
-        return inference
+        addon_object.inference.extra["tracked_objects"] = event_counter
+        addon_object.shared["trackable_object"] = last_updated
+        return addon_object
 
     def _get_current_direction(self):
         """
