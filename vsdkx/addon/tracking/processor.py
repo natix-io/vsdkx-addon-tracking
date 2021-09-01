@@ -105,7 +105,7 @@ class TrackerProcessor(Addon):
             self._trackableObjects[object_id] = self._trackable_obj
             last_updated[object_id] = self._trackable_obj
         addon_object.inference.extra["tracked_objects"] = event_counter
-        addon_object.shared["trackable_object"] = last_updated
+        addon_object.shared["trackable_objects"] = last_updated
         return addon_object
 
     def _get_current_direction(self):
