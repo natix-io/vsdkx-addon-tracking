@@ -4,6 +4,9 @@ from vsdkx.addon.tracking.processor import TrackerProcessor
 
 
 class GroupTrackerProcessor(TrackerProcessor):
+    """
+    Track group boxes
+    """
     def post_process(self, addon_object: AddonObject) -> AddonObject:
         addon_object.inference.extra["tracked_groups"], \
         addon_object.shared["trackable_groups"] = \
