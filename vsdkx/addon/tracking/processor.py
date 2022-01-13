@@ -54,7 +54,8 @@ class TrackerProcessor(Addon):
             boxes (np.ndarray): bounding boxes of objects
         Returns:
             event_counter (int | dict): Amount of newly tracked events,
-            returns an int on unidirectional mode and a dict on a
+            returns an int on unidirectional mode and a dict on a 
+            bidirectional mode
             last_updated (dict): Filtered list of
             trackable objects that were updated on the last frame
 
