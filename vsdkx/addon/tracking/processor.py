@@ -28,19 +28,36 @@ class TrackerProcessor(Addon):
 
     def post_process(self, addon_object: AddonObject) -> AddonObject:
         """
+        Call tracking function with apropriate boxes and write resulting data
+        in Addon Object
+        
+        Args:
+            addon_object (AddonObject): addon object containing information
+            about frame and/or other addons shared data
+        
+        Returns:
+            (AddonObject): addon object has updated information for frame,
+            inference, result and/or shared information:
+
+        """
+        addon_object.inference.extra["tracked_objects"], \
+        addon_object.shared["trackable_object"] = \
+            self._box_counter(addon_object.inference.boxes)
+
+        return addon_object
+
+    def _box_counter(self, boxes: np.ndarray) -> tuple:
+        """
         Checks if input bounding boxes are new or existing objects to track
 
         Args:
-            addon_object (AddonObject): addon object containing information
-            about inference,
-            frame, other addons shared data
+            boxes (np.ndarray): bounding boxes of objects
         Returns:
-            (AddonObject): addon object has updated information for inference
-            result and/or shared information:
-                event_counter (int | dict): Amount of newly tracked events,
-                returns an int on unidirectional mode and a dict on a
-                bidirectional mode last_updated (dict): Filtered list of
-                trackable objects that were updated on the last frame
+            event_counter (int | dict): Amount of newly tracked events,
+            returns an int on unidirectional mode and a dict on a 
+            bidirectional mode
+            last_updated (dict): Filtered list of
+            trackable objects that were updated on the last frame
 
         """
         event_counter = 0
@@ -49,15 +66,10 @@ class TrackerProcessor(Addon):
         # centroids of bounding boxes
         last_updated = {}
 
+        objects, bounding_boxes = self._ct.update(boxes)
         # exit immediately if no people boxes found
-        if len(addon_object.inference.boxes) == 0:
-            self._ct.update(addon_object.inference.boxes)
-            addon_object.inference.extra["tracked_objects"] = event_counter
-            addon_object.shared["trackable_object"] = last_updated
-            return addon_object
-        else:
-            objects, bounding_boxes = \
-                self._ct.update(addon_object.inference.boxes)
+        if len(boxes) == 0:
+            return event_counter, last_updated
 
         # loop over the tracked objects
         for (object_id, centroid) in objects.items():
@@ -104,9 +116,7 @@ class TrackerProcessor(Addon):
             self._trackable_obj.bounding_box = bounding_boxes[object_id]
             self._trackableObjects[object_id] = self._trackable_obj
             last_updated[object_id] = self._trackable_obj
-        addon_object.inference.extra["tracked_objects"] = event_counter
-        addon_object.shared["trackable_objects"] = last_updated
-        return addon_object
+        return event_counter, last_updated
 
     def _get_current_direction(self):
         """
