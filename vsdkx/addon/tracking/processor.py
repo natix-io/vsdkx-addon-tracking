@@ -41,7 +41,7 @@ class TrackerProcessor(Addon):
 
         """
         addon_object.inference.extra["tracked_objects"], \
-        addon_object.shared["trackable_object"] = \
+        addon_object.shared["trackable_objects"] = \
             self._box_counter(addon_object.inference.boxes)
 
         return addon_object
