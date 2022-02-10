@@ -3,11 +3,19 @@ from vsdkx.core.structs import AddonObject
 
 
 class TrajectoryProcessor(Addon):
+    """
+    Calculate movement direction for objects based on their past and present
+    coordinates on the frame
+
+    Attributes:
+        centroid_index (int): nth old position of object to compare present
+        position for direction.
+    """
     def __init__(self, addon_config: dict, model_settings: dict,
                  model_config: dict, drawing_config: dict):
         super().__init__(
             addon_config, model_settings, model_config, drawing_config)
-        self.centroid_mean = addon_config.get('centroid_mean', 3)
+        self.centroid_index = addon_config.get('centroid_index', 3)
 
     def post_process(self, addon_object: AddonObject) -> AddonObject:
         """
@@ -46,8 +54,11 @@ class TrajectoryProcessor(Addon):
 
         for _, tracked_object in tracked_objects.items():
 
+            # Take minimal index out of length of centroids array and
+            # configured index, to ensure that nth old element will be taken
+            # from list or the oldest one
             starting_centroid_index = min(len(tracked_object.centroids),
-                                          self.centroid_mean)
+                                          self.centroid_index)
 
             prev_centroids = tracked_object.centroids[-starting_centroid_index]
             current_centroids = tracked_object.centroids[-1]
