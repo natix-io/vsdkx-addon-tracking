@@ -27,27 +27,37 @@ class TrackerProcessor(Addon):
         self._min_appearance = addon_config['min_appearance']
 
     def post_process(self, addon_object: AddonObject) -> AddonObject:
+        """
+        Call tracking function with apropriate boxes and write resulting data
+        in Addon Object
+        
+        Args:
+            addon_object (AddonObject): addon object containing information
+            about frame and/or other addons shared data
+        
+        Returns:
+            (AddonObject): addon object has updated information for frame,
+            inference, result and/or shared information:
+
+        """
         addon_object.inference.extra["tracked_objects"], \
-        addon_object.shared["trackable_object"] = \
+        addon_object.shared["trackable_objects"] = \
             self._box_counter(addon_object.inference.boxes)
 
         return addon_object
 
-    def _box_counter(self, boxes) -> tuple:
+    def _box_counter(self, boxes: np.ndarray) -> tuple:
         """
         Checks if input bounding boxes are new or existing objects to track
 
         Args:
-            addon_object (AddonObject): addon object containing information
-            about inference,
-            frame, other addons shared data
+            boxes (np.ndarray): bounding boxes of objects
         Returns:
-            (AddonObject): addon object has updated information for inference
-            result and/or shared information:
-                event_counter (int | dict): Amount of newly tracked events,
-                returns an int on unidirectional mode and a dict on a
-                bidirectional mode last_updated (dict): Filtered list of
-                trackable objects that were updated on the last frame
+            event_counter (int | dict): Amount of newly tracked events,
+            returns an int on unidirectional mode and a dict on a 
+            bidirectional mode
+            last_updated (dict): Filtered list of
+            trackable objects that were updated on the last frame
 
         """
         event_counter = 0
