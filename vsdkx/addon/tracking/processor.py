@@ -93,7 +93,6 @@ class TrackerProcessor(Addon):
 
                 self._trackable_obj.trajectory_mean = np.mean(x), np.mean(y)
                 self._trackable_obj.centroids.append(centroid)
-                # self._get_current_direction()
 
                 if not self._trackable_obj.counted:
                     self._trackable_obj.counted = True
@@ -117,20 +116,6 @@ class TrackerProcessor(Addon):
             self._trackableObjects[object_id] = self._trackable_obj
             last_updated[object_id] = self._trackable_obj
         return event_counter, last_updated
-
-    # def _get_current_direction(self):
-    #     """
-    #     Sets the current walking direction of the trackable object.
-    #     Supported directions are 'up', 'down'.
-    #     """
-    #
-    #     prev_centroids = self._trackable_obj.centroids[-2]
-    #     current_centroids = self._trackable_obj.centroids[-1]
-    #
-    #     if prev_centroids[1] < current_centroids[1]:
-    #         self._trackable_obj.direction = 'down'
-    #     elif prev_centroids[1] > current_centroids[1]:
-    #         self._trackable_obj.direction = 'up'
 
     def _get_object_position(self, centroid, direction):
         """
