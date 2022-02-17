@@ -30,6 +30,9 @@ class TrackableObject:
         self.prev_position = ''
         self.trajectory_mean = ''
         self.tracked_number = 1
+        self.current_speed = 0
+        self.speeds = []
+        self.action = ''
 
     def __repr__(self) -> str:
         return f"{{'object_id': {self.object_id}}}"
