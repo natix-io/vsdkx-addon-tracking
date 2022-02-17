@@ -7,7 +7,10 @@ from vsdkx.core.structs import AddonObject
 class SpeedEstimationProcessor(Addon):
     """
     Calculate movement direction for objects based on their past and present
-    coordinates on the frame
+    coordinates on the frame. This algorithm is based on the methodology
+    proposed on the following paper:
+
+    https://ieeexplore.ieee.org/document/6614066
 
     Attributes:
         person_action: (boolean) Flag on estimating actions such as
