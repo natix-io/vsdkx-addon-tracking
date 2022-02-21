@@ -58,7 +58,7 @@ class SpeedEstimationProcessor(Addon):
 
         self._kph = 3.6
         self._average_running_kph = 9.1
-        self._average_walking_kph = 5.04 #/ self.fps
+        self._average_walking_kph = 1.5
 
     def post_process(self, addon_object: AddonObject) -> AddonObject:
         """
@@ -166,21 +166,11 @@ class SpeedEstimationProcessor(Addon):
                         (1 / self.fps))
 
                 v = np.sqrt((np.power(v_x, 2) + np.power(v_y, 2))) * self._kph
-
                 tracked_object.speeds.append(v)
 
-                # Get average over the frames of the past second
-
-                if len(tracked_object.speeds) > self.fps:
-                    tracked_object.current_speed = sum(tracked_object.speeds[
-                                                       (len(
-                                                           tracked_object.speeds)
-                                                        - self.fps - 1):-1]) \
-                                                   / self.fps
-                else:
-                    tracked_object.current_speed = sum(
-                        tracked_object.speeds) / len(
-                        tracked_object.speeds)
+                tracked_object.current_speed = sum(
+                    tracked_object.speeds) / len(
+                    tracked_object.speeds)
 
                 if self.person_action:
                     tracked_object.action = \
