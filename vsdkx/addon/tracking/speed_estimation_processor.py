@@ -57,8 +57,8 @@ class SpeedEstimationProcessor(Addon):
         self._running_action = 'running'
 
         self._kph = 3.6
-        self._average_running_kph = 8.4
-        self._average_walking_kph = 5.04 / self.fps
+        self._average_running_kph = 9.1
+        self._average_walking_kph = 5.04 #/ self.fps
 
     def post_process(self, addon_object: AddonObject) -> AddonObject:
         """
