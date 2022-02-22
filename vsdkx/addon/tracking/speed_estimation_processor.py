@@ -35,7 +35,8 @@ class SpeedEstimationProcessor(Addon):
         _standing_action: (string) Constant string for standing action
         _kph: (float) Constant for kilometers per hour (kph)
         _average_running_kph: (float) Constant for average running speed in kph
-        _average_walking_kph: (float) Constant for average walking speed in kph
+        _average_walking_kph: (float) Constant for converting the average walking
+            speed from meters to km/h
     """
 
     def __init__(self, addon_config: dict, model_settings: dict,
@@ -45,12 +46,12 @@ class SpeedEstimationProcessor(Addon):
         self.person_action = addon_config.get('person_action', True)
         self.camera_length = addon_config.get('camera_length', 4.5)  # meter
         self.fps = addon_config.get('fps', 30)
-        self.lens_dimension = addon_config.get('lens_dimension', 2000)  # mm
-        self.focal_length = addon_config.get('focal_length', 4000)
+        self.lens_dimension = addon_config.get('lens_dimension', 0)  # mm
+        self.focal_length = addon_config.get('focal_length', 0)
         self.camera_horizontal_degrees = \
-            addon_config.get('camera_horizontal_degrees', 0)
+            addon_config.get('camera_horizontal_degrees', 80)
         self.camera_vertical_degrees = \
-            addon_config.get('camera_vertical_degrees', 0)
+            addon_config.get('camera_vertical_degrees', 53)
 
         self._walking_action = 'walking'
         self._standing_action = 'standing'
@@ -168,9 +169,16 @@ class SpeedEstimationProcessor(Addon):
                 v = np.sqrt((np.power(v_x, 2) + np.power(v_y, 2))) * self._kph
                 tracked_object.speeds.append(v)
 
-                tracked_object.current_speed = sum(
-                    tracked_object.speeds) / len(
-                    tracked_object.speeds)
+                if len(tracked_object.speeds) > self.fps:
+                    tracked_object.current_speed = sum(tracked_object.speeds[
+                                                       (len(
+                                                           tracked_object.speeds)
+                                                        - self.fps - 1):-1]) \
+                                                   / self.fps
+                else:
+                    tracked_object.current_speed = sum(
+                        tracked_object.speeds) / len(
+                        tracked_object.speeds)
 
                 if self.person_action:
                     tracked_object.action = \
