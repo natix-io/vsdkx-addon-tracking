@@ -33,10 +33,9 @@ class SpeedEstimationProcessor(Addon):
         _walking_action: (string) Constant string for walking action
         _running_action: (string) Constant string for running action
         _standing_action: (string) Constant string for standing action
-        _kph: (float) Constant for kilometers per hour (kph)
+        _kph: (float) Constant for converting meters to kph
         _average_running_kph: (float) Constant for average running speed in kph
-        _average_walking_kph: (float) Constant for converting the average walking
-            speed from meters to km/h
+        _average_walking_kph: (float) Constant for average walking speed in kph
     """
 
     def __init__(self, addon_config: dict, model_settings: dict,
