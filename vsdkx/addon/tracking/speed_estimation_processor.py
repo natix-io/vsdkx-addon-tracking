@@ -69,7 +69,7 @@ class SpeedEstimationProcessor(Addon):
 
         frame_height, frame_width, _ = addon_object.frame.shape
         self._get_object_speed(
-            addon_object.shared.get("trackable_objects", {}),
+            addon_object.shared.get("trackable_objects_history", {}),
             frame_height,
             frame_width
         )
