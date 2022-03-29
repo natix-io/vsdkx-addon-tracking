@@ -24,11 +24,10 @@ class TrackerProcessor(Addon):
             addon_config['distance_threshold'])
         self._bidirectional_mode = addon_config['bidirectional_mode']
         self._bidirectional_threshold = addon_config['bidirectional_threshold']
-        self._min_appearance = addon_config['min_appearance']
 
     def post_process(self, addon_object: AddonObject) -> AddonObject:
         """
-        Call tracking function with apropriate boxes and write resulting data
+        Call tracking function with appropriate boxes and write resulting data
         in Addon Object
 
         Args:
