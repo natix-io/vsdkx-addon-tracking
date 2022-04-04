@@ -19,6 +19,8 @@ class CentroidTracker:
         objects (OrderedDict): OrderedDict of all registered objects
         disappeared (OrderedDict): OrderedDict of all objects marked
             as 'disappeared'
+        updated (OrderedDict): OrderedDict of all objects marked as 'updated'
+            on the current frame
         max_disappeared (int): Number of consecutive missed frames to assume
                 it disappeared
         distance_threshold (int): Maximum distance between two centroids
@@ -44,6 +46,7 @@ class CentroidTracker:
         self.objects = OrderedDict()
         self.bounding_box = OrderedDict()
         self.disappeared = OrderedDict()
+        self.updated = OrderedDict()
         self.max_disappeared = max_disappeared
         self.distance_threshold = distance_threshold
 
@@ -60,6 +63,7 @@ class CentroidTracker:
         self.objects[self.next_object_id] = centroid
         self.bounding_box[self.next_object_id] = rect
         self.disappeared[self.next_object_id] = 0
+        self.updated[self.next_object_id] = False
         self.next_object_id += 1
 
     def deregister(self, object_id):
@@ -83,7 +87,9 @@ class CentroidTracker:
             rects (list): List of object bounding box rectangles
 
         Returns:
-            (list): Updated list of trackable objects
+            (dict): Updated list of trackable objects
+            (dict): Bounding boxes per object ID
+            (dict): Updated flags per object ID
         """
         # check to see if the list of input bounding box rectangles is empty
         if len(rects) == 0:
@@ -176,6 +182,7 @@ class CentroidTracker:
                     self.objects[object_id] = input_centroids[col]
                     self.bounding_box[object_id] = rects[col]
                     self.disappeared[object_id] = 0
+                    self.updated[object_id] = True
 
                     # indicate that we have examined each of the row and
                     # column indexes, respectively
@@ -198,6 +205,7 @@ class CentroidTracker:
                     # index and increment the disappeared counter
                     object_id = object_ids[row]
                     self.disappeared[object_id] += 1
+                    self.updated[object_id] = False
 
                     # check to see if the number of consecutive
                     # frames the object has been marked "disappeared"
@@ -213,4 +221,4 @@ class CentroidTracker:
                     self.register(input_centroids[col], rects[i])
 
         # return the set of trackable objects
-        return self.objects, self.bounding_box
+        return self.objects, self.bounding_box, self.updated

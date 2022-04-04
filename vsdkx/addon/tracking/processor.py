@@ -43,6 +43,8 @@ class TrackerProcessor(Addon):
         addon_object.inference.extra["tracked_objects"], \
         addon_object.shared["trackable_objects"] = \
             self._box_counter(addon_object.inference.boxes)
+        addon_object.shared["trackable_objects_history"] = \
+            self._trackableObjects
 
         return addon_object
 
@@ -66,7 +68,7 @@ class TrackerProcessor(Addon):
         # centroids of bounding boxes
         last_updated = {}
 
-        objects, bounding_boxes = self._ct.update(boxes)
+        objects, bounding_boxes, updated_objs = self._ct.update(boxes)
         # exit immediately if no people boxes found
         if len(boxes) == 0:
             return event_counter, last_updated
@@ -114,7 +116,9 @@ class TrackerProcessor(Addon):
             # store the trackable object in our dictionary
             self._trackable_obj.bounding_box = bounding_boxes[object_id]
             self._trackableObjects[object_id] = self._trackable_obj
-            last_updated[object_id] = self._trackable_obj
+            if updated_objs[object_id]:
+                last_updated[object_id] = self._trackable_obj
+
         return event_counter, last_updated
 
     def _get_object_position(self, centroid, direction):
