@@ -1,10 +1,14 @@
+import logging
 import numpy as np
+from numpy import ndarray
+
 from vsdkx.core.interfaces import Addon
 from vsdkx.core.structs import AddonObject, Inference
-from numpy import ndarray
 
 from vsdkx.addon.tracking.centroidtracker import CentroidTracker
 from vsdkx.addon.tracking.trackableobject import TrackableObject
+
+LOG_TAG = 'Tracking Addon'
 
 
 class TrackerProcessor(Addon):
@@ -16,6 +20,8 @@ class TrackerProcessor(Addon):
                  model_config: dict, drawing_config: dict):
         super().__init__(addon_config, model_settings, model_config,
                          drawing_config)
+        self._logger = logging.getLogger(LOG_TAG)
+        
         self._trackableObjects = {}
         self._trackable_obj = None
         self._ct = CentroidTracker(
