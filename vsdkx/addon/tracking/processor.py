@@ -122,9 +122,9 @@ class TrackerProcessor(Addon):
             if updated_objs[object_id]:
                 last_updated[object_id] = self._trackable_obj
             
-            self._logger.debug(
-                    f"Found {len(last_updated)} last updated tracked objects"
-                )
+        self._logger.debug(
+            f"Found {len(last_updated)} last updated tracked objects"
+        )
         return event_counter, last_updated
 
     def _get_object_position(self, centroid, direction):
