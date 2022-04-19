@@ -106,7 +106,7 @@ class CentroidTracker:
 
             # return early as there are no centroids or tracking info
             # to update
-            return self.objects, self.bounding_box
+            return self.objects, self.bounding_box, self.updated
 
         # initialize an array of input centroids for the current frame
         input_centroids = np.zeros((len(rects), 2), dtype="int")
